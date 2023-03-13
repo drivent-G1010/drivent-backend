@@ -188,11 +188,58 @@ async function main() {
     rooms = await prisma.room.findMany();
   }
 
+  let user = await prisma.user.findFirst();
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email: "user@email.com",
+        password: "$2b$12$rkzpIaPH3U8yPbLNXNQadeqcjQApF9aoHpiwtWidlV2jUEVFFe2xS",
+      }
+    });
+  }
+
+  const booking = await prisma.booking.findMany();
+  if (booking.length === 0) {
+    await prisma.booking.createMany({
+      data: [
+        {
+          userId: user.id,
+          roomId: 2,
+        },
+        {
+          userId: user.id,
+          roomId: 8,
+        },
+        {
+          userId: user.id,
+          roomId: 11,
+        },
+        {
+          userId: user.id,
+          roomId: 11,
+        },
+        {
+          userId: user.id,
+          roomId: 15,
+        },
+        {
+          userId: user.id,
+          roomId: 15,
+        },
+        {
+          userId: user.id,
+          roomId: 17,
+        },
+      ]
+    });  
+  }
+  //eslint-disable-next-line no-console
   console.log({ event, ticketOnline, ticketWithHotel, ticketWithoutHotel, hotels, rooms });
 }
 
 main()
   .catch((e) => {
+    //eslint-disable-next-line no-console
     console.error(e);
     process.exit(1);
   })

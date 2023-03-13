@@ -1,24 +1,26 @@
-import app, { init } from "@/app";
-import { prisma } from "@/config";
-import faker from "@faker-js/faker";
-import { TicketStatus } from "@prisma/client";
-import e from "express";
-import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
-import supertest from "supertest";
+
+import app, { init } from "@/app";
+import { cleanDb, generateValidToken } from "../helpers";
 import {
   createEnrollmentWithAddress,
-  createUser,
-  createTicketType,
-  createTicket,
-  createPayment,
-  generateCreditCardData,
-  createTicketTypeWithHotel,
-  createTicketTypeRemote,
   createHotel,
+  createPayment,
   createRoomWithHotelId,
+  createTicket,
+  createTicketType,
+  createTicketTypeRemote,
+  createTicketTypeWithHotel,
+  createUser,
+  generateCreditCardData,
 } from "../factories";
-import { cleanDb, generateValidToken } from "../helpers";
+
+import { TicketStatus } from "@prisma/client";
+import e from "express";
+import faker from "@faker-js/faker";
+import httpStatus from "http-status";
+import { prisma } from "@/config";
+import supertest from "supertest";
 
 beforeAll(async () => {
   await init();
@@ -80,7 +82,7 @@ describe("GET /hotels", () => {
       expect(response.status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it("should respond with status 200 and a list of hotels", async () => {
+    it("should respond with status 200 and a list of hotels with rooms and bookings", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -94,14 +96,15 @@ describe("GET /hotels", () => {
 
       expect(response.status).toEqual(httpStatus.OK);
 
-      expect(response.body).toEqual([
+      expect(response.body).toMatchObject([
         {
           id: createdHotel.id,
           name: createdHotel.name,
           image: createdHotel.image,
           createdAt: createdHotel.createdAt.toISOString(),
-          updatedAt: createdHotel.updatedAt.toISOString()
-        }
+          updatedAt: createdHotel.updatedAt.toISOString(),
+          Rooms: expect.any(Array),
+        },
       ]);
     });
 
@@ -210,14 +213,16 @@ describe("GET /hotels/:hotelId", () => {
         image: createdHotel.image,
         createdAt: createdHotel.createdAt.toISOString(),
         updatedAt: createdHotel.updatedAt.toISOString(),
-        Rooms: [{
-          id: createdRoom.id,
-          name: createdRoom.name,
-          capacity: createdRoom.capacity,
-          hotelId: createdHotel.id,
-          createdAt: createdRoom.createdAt.toISOString(),
-          updatedAt: createdRoom.updatedAt.toISOString(),
-        }]
+        Rooms: [
+          {
+            id: createdRoom.id,
+            name: createdRoom.name,
+            capacity: createdRoom.capacity,
+            hotelId: createdHotel.id,
+            createdAt: createdRoom.createdAt.toISOString(),
+            updatedAt: createdRoom.updatedAt.toISOString(),
+          },
+        ],
       });
     });
 
@@ -235,17 +240,14 @@ describe("GET /hotels/:hotelId", () => {
 
       expect(response.status).toEqual(httpStatus.OK);
 
-      expect(response.body).toEqual(
-        {
-          id: createdHotel.id,
-          name: createdHotel.name,
-          image: expect.any(String),
-          createdAt: createdHotel.createdAt.toISOString(),
-          updatedAt: createdHotel.updatedAt.toISOString(),
-          Rooms: [],
-        }
-      );
+      expect(response.body).toEqual({
+        id: createdHotel.id,
+        name: createdHotel.name,
+        image: expect.any(String),
+        createdAt: createdHotel.createdAt.toISOString(),
+        updatedAt: createdHotel.updatedAt.toISOString(),
+        Rooms: [],
+      });
     });
   });
 });
-

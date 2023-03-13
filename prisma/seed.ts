@@ -41,7 +41,7 @@ async function main() {
     ticketWithHotel = await prisma.ticketType.create({
       data: {
         name: 'presencial',
-        price: 300,
+        price: 600,
         isRemote: false,
         includesHotel: true,
       },
@@ -58,7 +58,7 @@ async function main() {
     ticketWithoutHotel = await prisma.ticketType.create({
       data: {
         name: 'presencial',
-        price: 300,
+        price: 250,
         isRemote: false,
         includesHotel: false,
       },

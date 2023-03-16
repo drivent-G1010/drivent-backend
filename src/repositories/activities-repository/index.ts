@@ -12,3 +12,9 @@ async function findActivitiesByDay(dayId: number) {
   });
 }
 
+const activitiesRepository = {
+  findDays,
+  findActivitiesByDay,
+};
+
+export default activitiesRepository;

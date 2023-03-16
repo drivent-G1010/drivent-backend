@@ -39,4 +39,24 @@ export async function getActivitiesByDay(req: AuthenticatedRequest, res: Respons
   }
 }
 
-export function selectActivities() {}
+export async function selectActivities(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { userId } = req;
+    const { activityId } = req.body;
+
+    if (!activityId) {
+      return res.sendStatus(httpStatus.BAD_REQUEST);
+    }
+
+    const bookingActivity = await activitiesService.selectActivity(userId, Number(activityId));
+
+    return res.status(httpStatus.OK).send({
+      bookingActivityId: bookingActivity.id,
+    });
+  } catch (error) {
+    if (error.name === "CannotBookingError") {
+      return res.sendStatus(httpStatus.FORBIDDEN);
+    }
+    return res.sendStatus(httpStatus.NOT_FOUND);
+  }
+}

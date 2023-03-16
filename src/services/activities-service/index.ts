@@ -34,9 +34,14 @@ async function getActivitiesByDay(userId: number, dayId: number) {
   return activities;
 }
 
+async function selectActivity(userId: number, activityId: number) {
+  return activitiesRepository.createBookingActivity({ userId, activityId });
+}
+
 const activitiesService = {
   getDays,
   getActivitiesByDay,
+  selectActivity,
 };
 
 export default activitiesService;

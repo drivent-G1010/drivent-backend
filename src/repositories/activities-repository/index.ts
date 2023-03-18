@@ -14,7 +14,12 @@ async function findActivitiesByDay(date: string) {
     where: {
       startsAt: {
         gte: new Date(`${date}T00:00:00.000Z`),
-        lt: new Date(`${date}T23:00:00.000Z`),
+        lt: new Date(`${date}T23:59:00.000Z`),
+      },
+    },
+    include: {
+      _count: {
+        select: { BookingActivity: true },
       },
     },
   });

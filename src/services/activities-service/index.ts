@@ -1,7 +1,7 @@
-import { notFoundError } from "@/errors";
-import { cannotListHotelsError } from "@/errors/cannot-list-hotels-error";
 import activitiesRepository from "@/repositories/activities-repository";
+import { cannotListHotelsError } from "@/errors/cannot-list-hotels-error";
 import enrollmentRepository from "@/repositories/enrollment-repository";
+import { notFoundError } from "@/errors";
 import ticketRepository from "@/repositories/ticket-repository";
 
 async function listActivities(userId: number) {

@@ -1,13 +1,15 @@
+import { authenticateToken, validateBody } from "@/middlewares";
+import { getActivitiesByDay, getDays, selectActivities } from "@/controllers";
+
 import { Router } from "express";
-import { authenticateToken } from "@/middlewares";
-import { getDays, getActivitiesByDay, selectActivities } from "@/controllers";
+import { getActivitiesDateSchema } from "@/schemas";
 
 const activitiesRouter = Router();
 
 activitiesRouter
   .all("/*", authenticateToken)
-  .get("/", getDays)
-  .get("/:date", getActivitiesByDay)
+  .get("/days", getDays)
+  .get("/", validateBody(getActivitiesDateSchema), getActivitiesByDay)
   .post("/", selectActivities);
 
 export { activitiesRouter };

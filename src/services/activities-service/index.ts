@@ -1,6 +1,7 @@
 import { notFoundError } from "@/errors";
 import { cannotListHotelsError } from "@/errors/cannot-list-hotels-error";
 import activitiesRepository from "@/repositories/activities-repository";
+import enrollmentRepository from "@/repositories/enrollment-repository";
 import ticketRepository from "@/repositories/ticket-repository";
 
 async function listActivities(userId: number) {
@@ -12,20 +13,23 @@ async function listActivities(userId: number) {
   //Tem ticket pago isOnline false e includesHotel true
   const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
 
-  if (!ticket || ticket.status === "RESERVED" || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+  if (!ticket || ticket.status === "RESERVED") {
     throw cannotListHotelsError(); //criar a função que pra atividades
   }
 }
 async function getDays(userId: number) {
   await listActivities(userId);
 
-  const days = await activitiesRepository.findDays();
+  const dates = await activitiesRepository.findDays();
+
+  const days = [...new Set(dates.map((d) => d.startsAt.toISOString().split("T")[0]))];
+
   return days;
 }
 
-async function getActivitiesByDay(userId: number, dayId: number) {
+async function getActivitiesByDay(userId: number, date: string) {
   await listActivities(userId);
-  const activities = await activitiesRepository.findActivitiesByDay(dayId);
+  const activities = await activitiesRepository.findActivitiesByDay(date);
 
   if (!activities) {
     throw notFoundError();
@@ -35,7 +39,7 @@ async function getActivitiesByDay(userId: number, dayId: number) {
 }
 
 async function selectActivity(userId: number, activityId: number) {
-  return activitiesRepository.createBookingActivity({ userId, activityId });
+  return activitiesRepository.createBookingActivity(userId, activityId);
 }
 
 const activitiesService = {

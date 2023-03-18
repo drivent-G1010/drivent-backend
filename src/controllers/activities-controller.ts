@@ -22,10 +22,10 @@ export async function getDays(req: AuthenticatedRequest, res: Response) {
 
 export async function getActivitiesByDay(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const { hotelId } = req.params;
+  const { date } = req.params;
 
   try {
-    const activities = await activitiesService.getActivitiesByDay(Number(userId), Number(hotelId));
+    const activities = await activitiesService.getActivitiesByDay(Number(userId), date);
 
     return res.status(httpStatus.OK).send(activities);
   } catch (error) {
@@ -35,6 +35,7 @@ export async function getActivitiesByDay(req: AuthenticatedRequest, res: Respons
     if (error.name === "cannotListHotelsError") {
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
+    console.log(error);
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }

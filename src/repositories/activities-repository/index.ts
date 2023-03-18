@@ -1,19 +1,27 @@
 import { prisma } from "@/config";
 
 async function findDays() {
-  return prisma.days.findMany();
+  return prisma.activity.findMany({
+    select: {
+      startsAt: true,
+    },
+    distinct: ["startsAt"],
+  });
 }
 
-async function findActivitiesByDay(dayId: number) {
-  return prisma.activities.findMany({
+async function findActivitiesByDay(date: string) {
+  return prisma.activity.findMany({
     where: {
-      dayId,
+      startsAt: {
+        gte: new Date(`${date}T00:00:00.000Z`),
+        lt: new Date(`${date}T23:00:00.000Z`),
+      },
     },
   });
 }
 
 async function createBookingActivity(userId: number, activityId: number) {
-  return prisma.bookingActivities.create({
+  return prisma.bookingActivity.create({
     data: {
       userId,
       activityId,

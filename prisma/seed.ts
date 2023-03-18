@@ -194,7 +194,7 @@ async function main() {
       data: {
         email: "user@email.com",
         password: "$2b$12$rkzpIaPH3U8yPbLNXNQadeqcjQApF9aoHpiwtWidlV2jUEVFFe2xS",
-      }
+      },
     });
   }
 
@@ -230,8 +230,117 @@ async function main() {
           userId: user.id,
           roomId: 17,
         },
-      ]
-    });  
+      ],
+    });
+  }
+
+  const trails = await prisma.trail.findMany();
+  if (trails.length === 0) {
+    await prisma.trail.createMany({
+      data: [
+        {
+          name: "Salão principal Vai malandra",
+        },
+        {
+          name: "Sala de conferência Envolver",
+        },
+        {
+          name: "Sala de reuniões Eu vou ficar, eu vou trair",
+        },
+      ],
+    });
+  }
+
+  const activities = await prisma.activity.findMany();
+  if (activities.length === 0) {
+    await prisma.activity.createMany({
+      data: [
+        {
+          name: "Workshop Quadradinho",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 2,
+        },
+        {
+          name: "Mesa redonda do funk",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 3,
+        },
+        {
+          name: "Reunião anitters",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 4,
+        },
+        {
+          name: "Acabou a criatividade 1",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 2,
+        },
+        {
+          name: "Acabou a criatividade 2",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 3,
+        },
+        {
+          name: "Acabou a criatividade 3",
+          capacity: 40,
+          startsAt: dayjs("2023-04-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-04-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 4,
+        },
+        {
+          name: "Workshop Quadradinho avançado",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 2,
+        },
+        {
+          name: "Mesa redonda do funk 2",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 3,
+        },
+        {
+          name: "Reunião anitters 2",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T08:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T08:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 4,
+        },
+        {
+          name: "Acabou a criatividade 1",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 2,
+        },
+        {
+          name: "Acabou a criatividade 2",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 3,
+        },
+        {
+          name: "Acabou a criatividade 3",
+          capacity: 40,
+          startsAt: dayjs("2023-05-30T10:00:00.000Z").toDate(),
+          endsAt: dayjs("2023-05-30T10:00:00.000Z").add(1, "hour").toDate(),
+          trailId: 4,
+        },
+      ],
+    });
   }
   //eslint-disable-next-line no-console
   console.log({ event, ticketOnline, ticketWithHotel, ticketWithoutHotel, hotels, rooms });

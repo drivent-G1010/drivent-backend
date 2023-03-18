@@ -1,6 +1,6 @@
 import { AuthenticatedRequest } from "@/middlewares";
-import activitiesService from "@/services/activities-service";
 import { Response } from "express";
+import activitiesService from "@/services/activities-service";
 import httpStatus from "http-status";
 
 export async function getDays(req: AuthenticatedRequest, res: Response) {
@@ -22,7 +22,7 @@ export async function getDays(req: AuthenticatedRequest, res: Response) {
 
 export async function getActivitiesByDay(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const { date } = req.params;
+  const date: string = req.body.date;
 
   try {
     const activities = await activitiesService.getActivitiesByDay(Number(userId), date);
@@ -32,10 +32,9 @@ export async function getActivitiesByDay(req: AuthenticatedRequest, res: Respons
     if (error.name === "NotFoundError") {
       return res.sendStatus(httpStatus.NOT_FOUND);
     }
-    if (error.name === "cannotListHotelsError") {
+    if (error.name === "cannotListActivitiesError") {
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
-    console.log(error);
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }

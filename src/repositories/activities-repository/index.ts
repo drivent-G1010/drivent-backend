@@ -10,16 +10,20 @@ async function findDays() {
 }
 
 async function findActivitiesByDay(date: string) {
-  return prisma.activity.findMany({
-    where: {
-      startsAt: {
-        gte: new Date(`${date}T00:00:00.000Z`),
-        lt: new Date(`${date}T23:59:00.000Z`),
-      },
-    },
+  return prisma.trail.findMany({
     include: {
-      _count: {
-        select: { BookingActivity: true },
+      Activity: {
+        where: {
+          startsAt: {
+            gte: new Date(`${date}T00:00:00.000Z`),
+            lt: new Date(`${date}T23:59:00.000Z`),
+          },
+        },
+        include: {
+          _count: {
+            select: { BookingActivity: true },
+          },
+        },
       },
     },
   });
@@ -34,10 +38,17 @@ async function createBookingActivity(userId: number, activityId: number) {
   });
 }
 
+async function getBookedActivitiesByUser(userId: number) {
+  return prisma.bookingActivity.findMany({
+    where: { userId },
+  });
+}
+
 const activitiesRepository = {
   findDays,
   findActivitiesByDay,
   createBookingActivity,
+  getBookedActivitiesByUser,
 };
 
 export default activitiesRepository;

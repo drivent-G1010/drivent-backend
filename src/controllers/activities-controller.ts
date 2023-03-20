@@ -22,7 +22,7 @@ export async function getDays(req: AuthenticatedRequest, res: Response) {
 
 export async function getActivitiesByDay(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const date: string = req.body.date;
+  const date: string = req.params.date;
 
   try {
     const activities = await activitiesService.getActivitiesByDay(Number(userId), date);

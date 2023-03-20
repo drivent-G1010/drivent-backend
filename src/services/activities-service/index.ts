@@ -28,20 +28,27 @@ async function getDays(userId: number) {
 
 async function getActivitiesByDay(userId: number, date: string) {
   await listActivities(userId);
+  const bookedActivities = await activitiesRepository.getBookedActivitiesByUser(userId);
   const activitiesData = await activitiesRepository.findActivitiesByDay(date);
-  const activities = activitiesData.map((activity) => {
-    const { _count, ...rest } = activity;
-    return {
-      ...rest,
-      remainingVacancies: activity.capacity - _count.BookingActivity,
-    };
+
+  const trails = activitiesData.map((trail) => {
+    const activities = trail.Activity.map((activity) => {
+      const { _count, ...rest } = activity;
+      const userBooked = bookedActivities.find((booking) => booking.activityId === activity.id) ? true : false;
+      return {
+        ...rest,
+        remainingVacancies: activity.capacity - _count.BookingActivity,
+        userBooked,
+      };
+    });
+    return { id: trail.id, name: trail.name, activities };
   });
 
-  if (!activities) {
+  if (!trails) {
     throw notFoundError();
   }
 
-  return activities;
+  return trails;
 }
 
 async function selectActivity(userId: number, activityId: number) {

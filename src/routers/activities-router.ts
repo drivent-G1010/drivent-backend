@@ -1,4 +1,4 @@
-import { authenticateToken, validateBody } from "@/middlewares";
+import { authenticateToken, validateParams } from "@/middlewares";
 import { getActivitiesByDay, getDays, selectActivities } from "@/controllers";
 
 import { Router } from "express";
@@ -9,7 +9,7 @@ const activitiesRouter = Router();
 activitiesRouter
   .all("/*", authenticateToken)
   .get("/days", getDays)
-  .get("/", validateBody(getActivitiesDateSchema), getActivitiesByDay)
+  .get("/:date", validateParams(getActivitiesDateSchema), getActivitiesByDay)
   .post("/", selectActivities);
 
 export { activitiesRouter };

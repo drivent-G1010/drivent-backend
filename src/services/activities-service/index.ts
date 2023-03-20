@@ -28,13 +28,17 @@ async function getDays(userId: number) {
 
 async function getActivitiesByDay(userId: number, date: string) {
   await listActivities(userId);
+  const bookedActivities = await activitiesRepository.getBookedActivitiesByUser(userId);
   const activitiesData = await activitiesRepository.findActivitiesByDay(date);
+
   const trails = activitiesData.map((trail) => {
     const activities = trail.Activity.map((activity) => {
       const { _count, ...rest } = activity;
+      const userBooked = bookedActivities.find((booking) => booking.activityId === activity.id) ? true : false;
       return {
         ...rest,
         remainingVacancies: activity.capacity - _count.BookingActivity,
+        userBooked,
       };
     });
     return { id: trail.id, name: trail.name, activities };

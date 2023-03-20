@@ -38,10 +38,17 @@ async function createBookingActivity(userId: number, activityId: number) {
   });
 }
 
+async function getBookedActivitiesByUser(userId: number) {
+  return prisma.bookingActivity.findMany({
+    where: { userId },
+  });
+}
+
 const activitiesRepository = {
   findDays,
   findActivitiesByDay,
   createBookingActivity,
+  getBookedActivitiesByUser,
 };
 
 export default activitiesRepository;
